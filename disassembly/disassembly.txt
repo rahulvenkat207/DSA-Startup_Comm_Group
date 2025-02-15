@@ -1,0 +1,158 @@
+
+check.o:     file format pe-i386
+
+
+Disassembly of section .text:
+
+00000000 <_dummy>:   
+   0:	55                   	push   %ebp          ; Save old base pointer
+   1:	89 e5                	mov    %esp,%ebp     ; Set up stack frame
+   3:	83 ec 10             	sub    $0x10,%esp    ; Allocate 16 bytes on stack for local variables
+   6:	c7 45 fc 0f 00 00 00 	movl   $0xf,-0x4(%ebp)  ; Store 0x0F (15) at local variable 
+   d:	c7 45 f8 63 00 00 00 	movl   $0x63,-0x8(%ebp)  ; Store 0x63 (99) at local variable 
+  14:	8b 55 fc             	mov    -0x4(%ebp),%edx  ; Load first variable (15) into register
+  17:	8b 45 f8             	mov    -0x8(%ebp),%eax  ; Load second variable (99) into register
+  1a:	01 d0                	add    %edx,%eax     ; Add 15 to 99 = 114
+  1c:	c9                   	leave                ; 
+  1d:	c3                   	ret                  ; Return, register contains result (114)
+
+
+0000001e <_another_dummy>:   
+  1e:	55                   	push   %ebp          ; Save old base pointer
+  1f:	89 e5                	mov    %esp,%ebp     ; Set up stack frame
+  21:	83 ec 10             	sub    $0x10,%esp    ; Allocate 16 bytes on stack for local variables
+  24:	c7 45 fc 64 00 00 00 	movl   $0x64,-0x4(%ebp)  ; Store 0x64 (100) at local variable 
+  2b:	c7 45 f8 01 00 00 00 	movl   $0x1,-0x8(%ebp)  ; Store 0x01 (1) at local variable 
+  32:	8b 55 fc             	mov    -0x4(%ebp),%edx  ; Load first variable (100) into register
+  35:	8b 45 f8             	mov    -0x8(%ebp),%eax  ; Load second variable (1) into register
+  38:	01 d0                	add    %edx,%eax     ; Add EDX (100) to EAX (1) → EAX = 101
+  3a:	c9                   	leave                ; 
+  3b:	c3                   	ret                  ; Return, register contains result (101)
+
+0000003c <_main>:  
+  3c:	55                   	push   %ebp          ; Save old base pointer
+  3d:	89 e5                	mov    %esp,%ebp     ; Set up stack frame
+  3f:	83 e4 f0             	and    $0xfffffff0,%esp  
+  42:	83 ec 10             	sub    $0x10,%esp    ; Allocate 16 bytes on stack for local use
+
+  45:	e8 00 00 00 00       	call   4a <_main+0xe>  ; 
+
+  4a:	e8 b1 ff ff ff       	call   0 <_dummy>    ; Calls `_dummy`, returns sum (114) in register
+  4f:	89 44 24 0c          	mov    %eax,0xc(%esp)  ; Store `_dummy` result (114)
+
+  53:	e8 c6 ff ff ff       	call   1e <_another_dummy>  ; Calls `_another_dummy`, returns sum (101) in register
+  58:	89 44 24 08          	mov    %eax,0x8(%esp)  ; Store `_another_dummy` result (101) 
+
+  5c:	b8 00 00 00 00       	mov    $0x0,%eax     ; Set return value of `main` to 0
+  61:	c9                   	leave                
+  62:	c3                   	ret                  
+
+  63:	90                   	nop                  
+
+Disassembly of section .data:
+
+00000000 <_global_var>:
+   0:	07                   	pop    %es
+   1:	00 00                	add    %al,(%eax)
+	...
+
+Disassembly of section .drectve:
+
+00000000 <.drectve>:
+   0:	20 2d 61 6c 69 67    	and    %ch,0x67696c61
+   6:	6e                   	outsb  %ds:(%esi),(%dx)
+   7:	63 6f 6d             	arpl   %bp,0x6d(%edi)
+   a:	6d                   	insl   (%dx),%es:(%edi)
+   b:	3a 22                	cmp    (%edx),%ah
+   d:	5f                   	pop    %edi
+   e:	67 6c                	insb   (%dx),%es:(%di)
+  10:	6f                   	outsl  %ds:(%esi),(%dx)
+  11:	62 61 6c             	bound  %esp,0x6c(%ecx)
+  14:	5f                   	pop    %edi
+  15:	76 61                	jbe    78 <_main+0x3c>
+  17:	72 5f                	jb     78 <_main+0x3c>
+  19:	75 6e                	jne    89 <_main+0x4d>
+  1b:	69 6e 69 74 22 2c 32 	imul   $0x322c2274,0x69(%esi),%ebp
+	...
+
+Disassembly of section .rdata$zzz:
+
+00000000 <.rdata$zzz>:
+   0:	47                   	inc    %edi
+   1:	43                   	inc    %ebx
+   2:	43                   	inc    %ebx
+   3:	3a 20                	cmp    (%eax),%ah
+   5:	28 4d 69             	sub    %cl,0x69(%ebp)
+   8:	6e                   	outsb  %ds:(%esi),(%dx)
+   9:	47                   	inc    %edi
+   a:	57                   	push   %edi
+   b:	2e 6f                	outsl  %cs:(%esi),(%dx)
+   d:	72 67                	jb     76 <_main+0x3a>
+   f:	20 47 43             	and    %al,0x43(%edi)
+  12:	43                   	inc    %ebx
+  13:	2d 36 2e 33 2e       	sub    $0x2e332e36,%eax
+  18:	30 2d 31 29 20 36    	xor    %ch,0x36202931
+  1e:	2e 33 2e             	xor    %cs:(%esi),%ebp
+  21:	30 00                	xor    %al,(%eax)
+	...
+
+Disassembly of section .eh_frame:
+
+00000000 <.eh_frame>:
+   0:	14 00                	adc    $0x0,%al
+   2:	00 00                	add    %al,(%eax)
+   4:	00 00                	add    %al,(%eax)
+   6:	00 00                	add    %al,(%eax)
+   8:	01 7a 52             	add    %edi,0x52(%edx)
+   b:	00 01                	add    %al,(%ecx)
+   d:	7c 08                	jl     17 <.eh_frame+0x17>
+   f:	01 1b                	add    %ebx,(%ebx)
+  11:	0c 04                	or     $0x4,%al
+  13:	04 88                	add    $0x88,%al
+  15:	01 00                	add    %eax,(%eax)
+  17:	00 1c 00             	add    %bl,(%eax,%eax,1)
+  1a:	00 00                	add    %al,(%eax)
+  1c:	1c 00                	sbb    $0x0,%al
+  1e:	00 00                	add    %al,(%eax)
+  20:	04 00                	add    $0x0,%al
+  22:	00 00                	add    %al,(%eax)
+  24:	1e                   	push   %ds
+  25:	00 00                	add    %al,(%eax)
+  27:	00 00                	add    %al,(%eax)
+  29:	41                   	inc    %ecx
+  2a:	0e                   	push   %cs
+  2b:	08 85 02 42 0d 05    	or     %al,0x50d4202(%ebp)
+  31:	5a                   	pop    %edx
+  32:	c5 0c 04             	lds    (%esp,%eax,1),%ecx
+  35:	04 00                	add    $0x0,%al
+  37:	00 1c 00             	add    %bl,(%eax,%eax,1)
+  3a:	00 00                	add    %al,(%eax)
+  3c:	3c 00                	cmp    $0x0,%al
+  3e:	00 00                	add    %al,(%eax)
+  40:	22 00                	and    (%eax),%al
+  42:	00 00                	add    %al,(%eax)
+  44:	1e                   	push   %ds
+  45:	00 00                	add    %al,(%eax)
+  47:	00 00                	add    %al,(%eax)
+  49:	41                   	inc    %ecx
+  4a:	0e                   	push   %cs
+  4b:	08 85 02 42 0d 05    	or     %al,0x50d4202(%ebp)
+  51:	5a                   	pop    %edx
+  52:	c5 0c 04             	lds    (%esp,%eax,1),%ecx
+  55:	04 00                	add    $0x0,%al
+  57:	00 1c 00             	add    %bl,(%eax,%eax,1)
+  5a:	00 00                	add    %al,(%eax)
+  5c:	5c                   	pop    %esp
+  5d:	00 00                	add    %al,(%eax)
+  5f:	00 40 00             	add    %al,0x0(%eax)
+  62:	00 00                	add    %al,(%eax)
+  64:	27                   	daa    
+  65:	00 00                	add    %al,(%eax)
+  67:	00 00                	add    %al,(%eax)
+  69:	41                   	inc    %ecx
+  6a:	0e                   	push   %cs
+  6b:	08 85 02 42 0d 05    	or     %al,0x50d4202(%ebp)
+  71:	63 c5                	arpl   %ax,%bp
+  73:	0c 04                	or     $0x4,%al
+  75:	04 00                	add    $0x0,%al
+	...
